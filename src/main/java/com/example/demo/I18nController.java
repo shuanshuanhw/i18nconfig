@@ -10,10 +10,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -24,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -58,8 +56,7 @@ public class I18nController {
 
 
     @GetMapping("/test")
-    public String test(HttpServletRequest req, HttpServletResponse resp)
-    {
+    public String test(HttpServletRequest req, HttpServletResponse resp) {
         // Spring采用的默认区域解析器是AcceptHeaderLocaleResolver 它通过检验HTTP请求的accept-language头部来解析区域
 //        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(req);
 //        Locale aDefault = Locale.getDefault();
@@ -71,11 +68,19 @@ public class I18nController {
 //        System.out.println("本地语言："+aDefault.getLanguage());
 
 
-        System.out.println(ctx.getMessage("greeting.common",null,Locale.CHINESE));
+        System.out.println(ctx.getMessage("greeting.common", null, Locale.CHINESE));
         Locale locale = LocaleContextHolder.getLocale();
-        System.out.println("目前本地语言："+locale.getLanguage());
-        System.out.println("目前国家："+locale.getCountry());
+        System.out.println("目前本地语言：" + locale.getLanguage());
+        System.out.println("目前国家：" + locale.getCountry());
         return "index";
+    }
+
+
+    @RequestMapping(value = "/test2", method = RequestMethod.GET)
+    public String test(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response,
+                       @RequestParam(value = "locale", required = false) String localeStr) {
+        setUserLocale(request, response, localeStr);
+        return "test2";
     }
 
 
