@@ -1,0 +1,14 @@
+1、springboot的区域解析器有三个，AcceptHeaderLocaleResolver、SessionLocaleResolver、CookieLocaleResolver
+2、默认使用AcceptHeaderLocaleResolver进行区域解析，通过解析request header的accept-language字段的值，进行区域环境设置，这个accept-language由浏览器自动提供，或者可以在postman自己设定
+3、AcceptHeaderLocaleResolver无法改变用户的区域，因为它无法修改用户操作系统的区域设置。想要在自己的代码上切换不同区域设置，是不行的。
+4、SessionLocaleResolver。它通过检验用户会话中预置的属性来解析区域。如果该会话属性不存在，它会根据accept-language HTTP头部确定默认区域。
+5、你也可以检验用户浏览器中的Cookie，用CookieLocaleResolver来解析区域。如果Cookie不存在，它会根据accept-language HTTP头部确定默认区域。
+6、修改用户的区域环境，有两个方法。1、显式调用LocaleResolver.setLocale()来修改用户的区域。2、将LocaleChangeInterceptor拦截器应用到处理程序映射中，它会发现当前HTTP请求中出现的特殊参数。其中的参数名称可以通过拦截器的paramName属性进行自定义。如果这种参数出现在当前请求中，拦截器就会根据参数值来改变用户的区域。，如果web应用程序上下文中配置了不止一个处理程序映射，就必须在所有处理程序映射中注册这个拦截器，以便能在任意URL中改变它们的区域设置。
+
+
+7、SessionLocaleResolver的工作流程
+---
+1 首先检查session中的SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME的值，如果有，采用此值
+2 然后检查SessionLocaleResolver的defaultLocale属性，如果有，采用此值
+3 返回HttpServletRequest的getLocale()，也就是HTTP请求中的Accept-Language的值。
+---
